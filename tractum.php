@@ -11,7 +11,8 @@
 
 //Defaults
 $projectName = "";
-
+$branch = "";
+$emailTrigger = " ";
 
 $team = array();
 
@@ -58,7 +59,7 @@ if (isset($_GET['update'])) {
 		$r = count($obj['commits'][0]['removed']);
 
 		//The branch this is for.
-		if($branch_name == "master") { //Limit the git pull to only a specific branch
+		if($branch_name == $branch) { //Limit the git pull to only a specific branch
 
 			//Pull the files (Shell Comand)
 			try {
@@ -99,7 +100,7 @@ if (isset($_GET['update'])) {
 			$message .= "<br /><br />Payload:<br />".$json;
 
 			//Limit email send
-			if(strstr($commit_message, "(email)")) {
+			if(strstr($commit_message, $emailTrigger)) {
 				$headers = "From: ".$author_email."\r\n";
 				$headers .= "MIME-Version: 1.0\r\n";
 				$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
