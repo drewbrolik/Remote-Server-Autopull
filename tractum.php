@@ -9,10 +9,18 @@
 //-- Add the Password and Salt values to this file
 //-- Add the link the file gives you from the second field to the github web hooks.
 
+
 //Defaults
 $projectName = "";
 $branch = "";
 $emailTrigger = " ";
+
+$secondaryBranch = array();
+$secondaryURL = array();
+
+//Secondary Servers
+$secondaryBranch[] = "";
+$secondaryURL[] = "http://yourdomain.com/"."capere.php"; //Set this to the location of capere.php
 
 $team = array();
 
@@ -61,7 +69,7 @@ if (isset($_GET['update'])) {
 		//The branch this is for.
 		if($branch_name == $branch) { //Limit the git pull to only a specific branch
 
-			//Pull the files (Shell Comand)
+			//Pull the files (Shell Command)
 			try {
 				shell_exec('git pull');
 			} catch (Exception $e) {
@@ -70,7 +78,6 @@ if (isset($_GET['update'])) {
 			}
 
 			$message = "";
-
 			$message .= "A change was recently made to ".$repo_name." by ".$author_name.".<br />";
 			$message .= $author_name." requests that you check out the change on the remote server. If they made a mistake, or you have something to say to them. Their contact info is listed below. <br /><br />";
 			$message .= "Happy Coding! <br /><br />";
@@ -108,8 +115,35 @@ if (isset($_GET['update'])) {
 				mail($email, '['.$projectName.'] '.$author_name.' made a change you should look at',$message,$headers);
 			}
 
-		}
+		} else {
+			for($i = 0; $i < count($secondaryBranch); $i++ ) { 
+				if ($secondaryBranch[$i] == $branch_name) {
+					if(!function_exists('curl_init')) {
+						die('cURL is not installed.');
+					}
 
+					$ch = curl_init();
+						curl_setopt($ch, CURLOPT_URL, $secondaryURL[$i]);
+						curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+						curl_setopt($ch, CURLOPT_POST, true);
+						curl_setopt($ch, CURLOPT_HEADER, 0);
+
+					$data = array(
+						'page' => basename($_SERVER['PHP_SELF']), 
+						'payload' => $json, 
+						'branch' => $secondaryBranch[$i],
+						'team' => $email);
+
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+					$output = curl_exec($ch);
+					$info = curl_getinfo($ch);
+
+					curl_close($ch);
+
+				}
+			}	
+		}
 		
 	} else {
 		$msg = "This email is to alert you that a pull has failed on the ".$porjectName." site due to an incorrect password. :: ".$pass." :: ".$check;
@@ -124,7 +158,7 @@ if (isset($_GET['update'])) {
 	//Generate salt and password
 	$password	= $_GET['passgen'];
 	$randSalt	= (string)rand();
-	$generate = crypt($password, $randSalt);
+	$generate 	= crypt($password, $randSalt);
 	$genPass	= md5($generate);
 
 	$html = '<body style="width:70%; margin:20px auto; text-align:center;">';
@@ -144,7 +178,7 @@ if (isset($_GET['update'])) {
 
 	echo $html;
 } else {
-	$msg = "Access to dev.tractum.php was attempted without the proper credentials.";
+	$msg = "Access to tractum.php was attempted without the proper credentials.";
 	mail($email, '['.$projectName.'] GIT PULL failed',$msg,$headers);
 }
 
