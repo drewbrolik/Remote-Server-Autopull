@@ -103,7 +103,7 @@ For every additional server you set up, add them to tractum.php
 The file will loop through each of these secondary branches and send a cURL request to each of them
 with the payload sent by GitHub.
 
-````
+````PHP
 //Secondary Servers
 $secondaryBranch[] = "";
 $secondaryURL[] = "http://yourdomain.com/"."capere.php"; //Set this to the location of capere.php
@@ -111,7 +111,7 @@ $secondaryURL[] = "http://yourdomain.com/"."capere.php"; //Set this to the locat
 
 SSH into that server and clone your GitHub repo down using the specific branch
 
-````
+````BASH
 git clone -b development [git@github.com:]
 ````
 
