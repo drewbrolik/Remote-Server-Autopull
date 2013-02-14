@@ -9,7 +9,9 @@
 //-- https://github.com/jassok/Remote-Server-Autopull
 
 if($_POST['page']) {
-
+	// Gather setings
+	$emailTrigger = $_POST['emailTrigger'];
+	$projectName = $_POST['project'];
 	$email = $_POST['team'];
 
 	//Get the payload as jSON and parse it out
@@ -38,8 +40,7 @@ if($_POST['page']) {
 	if($branch_name == $_POST['branch']) {
 		// We are dealing with the right branch
 		try {
-			//shell_exec('git pull');
-			echo `git pull`;
+			shell_exec('git pull');
 		} catch (Exception $e) {
 			$msg = "This message is to alert you that a pull has failed on the ".$projectName." site.";
 			mail($email, '[',$projectName.'] Git pull Failed',$msg." - GIT PULL did not execute.",$headers);

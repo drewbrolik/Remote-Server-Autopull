@@ -129,6 +129,8 @@ if (isset($_GET['update'])) {
 						curl_setopt($ch, CURLOPT_HEADER, 0);
 
 					$data = array(
+						'project' => $projectName,
+						'emailTrigger' => $emailTrigger,
 						'page' => basename($_SERVER['PHP_SELF']), 
 						'payload' => $json, 
 						'branch' => $secondaryBranch[$i],
