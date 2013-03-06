@@ -25,26 +25,29 @@ Service Agreenment and Liecences are provided below.
 
 /* == Default Settings ============================================== */
 
-	$projectName       = " ";
-	$branch            = " ";
-	$emailTrigger      = " ";
+	$projectName       = "";
+	$branch            = "";
+	$emailTrigger      = "";
 	
-	$secondaryBranch[] = " ";
-	$secondaryURL[]    = " ";
+	$secondaryBranch[] = "";
+	$secondaryURL[]    = "";
 	
-	$team[]            = " ";
+	$team[]            = "";
 	
-	$salt              = " ";
-	$pass              = " "; 
+	$salt              = "";
+	$pass              = ""; 
 
+//If you're having problems pulling, uncomment these two lines and check debug_log.txt
+// echo `whoami`;
+// echo `git pull`;
 
 // Nothing below here needs to be modified.
 /* == API Functions ================================================= */
 $tractum = new tractum();
 $html = "";
+
 if(isset($_GET['update'])) {
 	$incoming = $tractum->checkHashSSHA($salt, $_GET['update']);
-
 	$debug = $tractum->writeDebug("Payload",$_POST['payload']);
 
 	if($pass == $incoming) {
@@ -194,7 +197,8 @@ class tractum {
 				$message .= "<div style='display:block; text-align:center; width:100%;'><a href='https://github.com/jassok/Remote-Server-Autopull'>Remote Server Autopull</a></div>";
 				$message .= "</div>";
 
-				$this->emailNotificaton($email,$author_email,$subject,$message);
+				$email = $this->emailNotificaton($email,$author_email,$subject,$message);
+				$this->writeDebug('Email Results',$email);
 			}
 			return $pull;
 		} else {
@@ -204,7 +208,6 @@ class tractum {
 	}
 
 	public function curlFunction($secondaryBranch,$secondaryURL,$projectName,$emailTrigger,$obj,$email) {
-		echo "in <br />";
 		for($i = 0; $i < count($secondaryBranch); $i++ ) {
 
 			$repo_branch = explode('/', $obj['ref']);
@@ -250,10 +253,10 @@ class tractum {
 		$mail = mail($to,$subject,$message,$headers);
 
 		if(!$mail) {
-			return false;
+			return $mail;
 		}
 
-		return true;
+		return "Email Successful";
 	}
 
 	public function writeDebug($title, $message) {
@@ -304,13 +307,13 @@ to set up this application.
 	<style type="text/css">
 		@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,600);
 		body 			{ background-color:#000040; font-family:'Titillium Web', sans-serif; }
-		a 				{ color:#fff; text-decoration:none; float:right; margin-top:10px; }
+		a 			{ color:#fff; text-decoration:none; float:right; margin-top:10px; }
 		a:hover 		{ text-decoration: none; color:#0080C0; }
-		h1 				{ display:block; padding:20px; background-color:#0080C0; color:#fff; }
+		h1 			{ display:block; padding:20px; background-color:#0080C0; color:#fff; }
 		input			{ display:block; padding:20px 10px; margin:10px 20px; width:540px; }
 		textarea 		{ display:block; }
 		label 			{ display:block; margin:10px 22px; }
-		p 				{ margin:10 22px; }
+		p 			{ margin:10 22px; }
 		.container 		{ width:600px; margin:5% auto; background-color:#fff; padding:0 0 10px 0;}
 		.warning 		{ background-color:#800000;}
 
